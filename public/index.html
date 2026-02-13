@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkyLedger Airlines - Multiplayer Aviation Tycoon</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>SkyLedger Airlines</h1>
+      <p>Multiplayer globale: costruisci la tua compagnia aerea tra rotte, carburante e concorrenza reale.</p>
+    </header>
+
+    <main>
+      <section id="auth" class="card">
+        <h2>Accesso / Registrazione</h2>
+        <div class="grid2">
+          <form id="register-form">
+            <h3>Crea account</h3>
+            <input name="email" type="email" required placeholder="Email" />
+            <input name="password" type="password" required minlength="8" placeholder="Password (min 8)" />
+            <input name="airlineName" required placeholder="Nome compagnia" />
+            <select name="hub" required>
+              <option value="MXP">Milano MXP</option>
+              <option value="FCO">Roma FCO</option>
+              <option value="JFK">New York JFK</option>
+              <option value="LHR">Londra LHR</option>
+              <option value="DXB">Dubai DXB</option>
+              <option value="HND">Tokyo HND</option>
+            </select>
+            <button type="submit">Registrati</button>
+          </form>
+
+          <form id="login-form">
+            <h3>Login</h3>
+            <input name="email" type="email" required placeholder="Email" />
+            <input name="password" type="password" required placeholder="Password" />
+            <button type="submit">Entra</button>
+          </form>
+        </div>
+        <p id="auth-status"></p>
+      </section>
+
+      <section id="game" class="hidden">
+        <div class="toolbar card">
+          <div id="kpi"></div>
+          <button id="logout">Logout</button>
+        </div>
+
+        <div class="grid2">
+          <section class="card">
+            <h3>Centro Operativo</h3>
+            <p id="market"></p>
+            <form id="launch-flight-form">
+              <select id="route-select" required></select>
+              <select id="aircraft-select" required></select>
+              <button type="submit">Lancia tratta</button>
+            </form>
+            <p id="launch-status"></p>
+          </section>
+
+          <section class="card">
+            <h3>Acquisto Aeromobili</h3>
+            <div id="catalog"></div>
+          </section>
+        </div>
+
+        <div class="grid2">
+          <section class="card">
+            <h3>Voli e Storico</h3>
+            <div id="flights"></div>
+          </section>
+          <section class="card">
+            <h3>Classifica Globale</h3>
+            <ol id="leaderboard"></ol>
+            <h4>Live feed mercato</h4>
+            <div id="live-feed"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
