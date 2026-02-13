@@ -1,0 +1,195 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  PLAYER
+  ADMIN
+}
+
+enum AircraftState {
+  ACTIVE
+  MAINTENANCE
+  GROUNDED
+}
+
+enum LedgerType {
+  REVENUE
+  EXPENSE
+  FINANCING
+}
+
+model User {
+  id                String   @id @default(uuid())
+  email             String   @unique
+  passwordHash      String
+  displayName       String
+  role              UserRole @default(PLAYER)
+  emailVerifiedAt   DateTime?
+  failedLoginCount  Int      @default(0)
+  lockedUntil       DateTime?
+  twoFaSecret       String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  airline           Airline?
+  refreshTokens     RefreshToken[]
+  auditLogs         AuditLog[]
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime @default(now())
+}
+
+model Airline {
+  id                String   @id @default(uuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name              String   @unique
+  code              String   @unique
+  logoUrl           String?
+  timezone          String
+  language          String   @default("it")
+  homeAirportId     String
+  homeAirport       Airport  @relation("HomeAirport", fields: [homeAirportId], references: [id])
+  cash              Decimal  @default(10000000) @db.Decimal(14,2)
+  debt              Decimal  @default(0) @db.Decimal(14,2)
+  reputation        Float    @default(50)
+  punctuality       Float    @default(75)
+  createdAt         DateTime @default(now())
+  aircraft          Aircraft[]
+  routes            Route[]
+  ledgerEntries     LedgerEntry[]
+}
+
+model Airport {
+  id                String   @id @default(uuid())
+  iata              String   @unique
+  icao              String   @unique
+  name              String
+  city              String
+  country           String
+  lat               Float
+  lon               Float
+  runwayLengthM     Int
+  slotCapacity      Int
+  landingFee        Decimal  @db.Decimal(10,2)
+  passengerFee      Decimal  @db.Decimal(10,2)
+  fuelPriceBase     Decimal  @db.Decimal(10,3)
+  demandBase        Float
+  createdAt         DateTime @default(now())
+  homeAirlines      Airline[] @relation("HomeAirport")
+  originRoutes      Route[]   @relation("OriginAirport")
+  destinationRoutes Route[]   @relation("DestinationAirport")
+}
+
+model AircraftModel {
+  id                String   @id @default(uuid())
+  code              String   @unique
+  manufacturer      String
+  name              String
+  seatsEconomy      Int
+  seatsBusiness     Int
+  cargoKg           Int
+  rangeKm           Int
+  cruiseKmh         Int
+  fuelBurnKgKm      Float
+  turnaroundMin     Int
+  maintenanceCostHr Decimal  @db.Decimal(10,2)
+  purchasePrice     Decimal  @db.Decimal(14,2)
+  leasePerDay       Decimal  @db.Decimal(12,2)
+  aircraft          Aircraft[]
+}
+
+model Aircraft {
+  id                String        @id @default(uuid())
+  airlineId         String
+  airline           Airline       @relation(fields: [airlineId], references: [id], onDelete: Cascade)
+  modelId           String
+  model             AircraftModel @relation(fields: [modelId], references: [id])
+  registrationCode  String        @unique
+  leased            Boolean       @default(true)
+  state             AircraftState @default(ACTIVE)
+  health            Float         @default(100)
+  flightHours       Float         @default(0)
+  assignedRouteId   String?
+  createdAt         DateTime      @default(now())
+  routes            Route[]
+}
+
+model Route {
+  id                    String   @id @default(uuid())
+  airlineId             String
+  airline               Airline  @relation(fields: [airlineId], references: [id], onDelete: Cascade)
+  originAirportId       String
+  originAirport         Airport  @relation("OriginAirport", fields: [originAirportId], references: [id])
+  destinationAirportId  String
+  destinationAirport    Airport  @relation("DestinationAirport", fields: [destinationAirportId], references: [id])
+  aircraftId            String
+  aircraft              Aircraft @relation(fields: [aircraftId], references: [id])
+  ticketPrice           Decimal  @db.Decimal(10,2)
+  frequencyPerDay       Int
+  active                Boolean  @default(true)
+  distanceKm            Float
+  lastSimulatedAt       DateTime?
+  createdAt             DateTime @default(now())
+}
+
+model LedgerEntry {
+  id          String    @id @default(uuid())
+  airlineId   String
+  airline     Airline   @relation(fields: [airlineId], references: [id], onDelete: Cascade)
+  type        LedgerType
+  amount      Decimal   @db.Decimal(12,2)
+  currency    String    @default("EUR")
+  description String
+  metadata    Json?
+  createdAt   DateTime  @default(now())
+}
+
+model EconomyConfig {
+  id                   String   @id @default(uuid())
+  key                  String   @unique
+  value                Json
+  updatedAt            DateTime @updatedAt
+}
+
+model WorldEvent {
+  id          String   @id @default(uuid())
+  title       String
+  effectType  String
+  payload     Json
+  startsAt    DateTime
+  endsAt      DateTime
+  createdAt   DateTime @default(now())
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action     String
+  entityType String
+  entityId   String?
+  meta       Json?
+  createdAt  DateTime @default(now())
+}
+
+model IdempotencyKey {
+  id         String   @id @default(uuid())
+  key        String   @unique
+  userId     String
+  endpoint   String
+  response   Json
+  createdAt  DateTime @default(now())
+}

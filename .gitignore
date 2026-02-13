@@ -1,0 +1,9 @@
+node_modules
+.pnpm-store
+.env
+.env.*
+dist
+.next
+coverage
+apps/api/prisma/dev.db
+apps/api/prisma/generated
