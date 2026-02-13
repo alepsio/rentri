@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RENTRi Academy Store</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container topbar-inner">
+        <div>
+          <p class="eyebrow">Formazione operativa RENTRI</p>
+          <h1>RENTRi Academy Store</h1>
+        </div>
+        <button id="go-admin" class="btn btn-outline">Area Admin</button>
+      </div>
+    </header>
+
+    <main id="store-view" class="container">
+      <section class="hero card">
+        <h2>Guide, corsi video e toolkit pronti all'uso per il RENTRI</h2>
+        <p>
+          Contenuti aggiornati sui riferimenti normativi principali (D.Lgs.
+          152/2006, D.M. 59/2023 e decreti attuativi RENTRI) con spiegazioni
+          pratiche per imprese, trasportatori, intermediari e consulenti.
+        </p>
+        <ul>
+          <li>Accesso immediato ai prodotti digitali</li>
+          <li>Percorsi ottimizzati per smartphone</li>
+          <li>Materiale operativo: checklist, FAQ e modelli</li>
+        </ul>
+      </section>
+
+      <section class="card legal-box">
+        <h3>Scadenze RENTRI in sintesi</h3>
+        <p>
+          Iscrizione e adozione progressiva del nuovo registro/FIR digitale con
+          finestre temporali previste dai decreti RENTRI: primo scaglione tra
+          dicembre 2024 e febbraio 2025, secondo tra giugno e agosto 2025,
+          terzo tra dicembre 2025 e febbraio 2026.
+        </p>
+        <p class="small">
+          Nota: verifica sempre aggiornamenti su portali istituzionali (MASE,
+          Albo Gestori Ambientali, supporto ufficiale RENTRI).
+        </p>
+      </section>
+
+      <section>
+        <div class="section-title-row">
+          <h3>Prodotti disponibili</h3>
+          <input id="search" type="search" placeholder="Cerca per titolo o tipo..." />
+        </div>
+        <div id="product-grid" class="product-grid"></div>
+      </section>
+
+      <section class="card checkout">
+        <h3>Checkout rapido</h3>
+        <form id="checkout-form">
+          <label>
+            Nome e cognome
+            <input required name="name" placeholder="Mario Rossi" />
+          </label>
+          <label>
+            Email
+            <input required name="email" type="email" placeholder="mario@azienda.it" />
+          </label>
+          <label>
+            Azienda
+            <input name="company" placeholder="Rossi Trasporti SRL" />
+          </label>
+          <label>
+            Prodotto
+            <select id="checkout-product" required></select>
+          </label>
+          <button class="btn" type="submit">Acquista ora</button>
+        </form>
+        <p id="checkout-status" class="status"></p>
+      </section>
+    </main>
+
+    <main id="admin-view" class="container hidden">
+      <section class="card">
+        <h2>Accesso Admin</h2>
+        <form id="admin-login" class="inline-form">
+          <input name="username" required placeholder="Username" />
+          <input name="password" type="password" required placeholder="Password" />
+          <button class="btn" type="submit">Entra</button>
+        </form>
+        <p class="small">Credenziali demo: <strong>admin / rentri2026</strong></p>
+        <p id="admin-login-status" class="status"></p>
+      </section>
+
+      <section id="admin-panel" class="hidden">
+        <section class="card">
+          <div class="section-title-row">
+            <h3>Aggiungi prodotto</h3>
+            <button id="admin-logout" class="btn btn-outline">Esci</button>
+          </div>
+          <form id="add-product" class="admin-grid">
+            <input required name="title" placeholder="Titolo prodotto" />
+            <select required name="type">
+              <option value="PDF">PDF</option>
+              <option value="Video Corso">Video Corso</option>
+              <option value="Documentazione">Documentazione</option>
+              <option value="FAQ Pack">FAQ Pack</option>
+            </select>
+            <input required name="price" type="number" min="1" step="1" placeholder="Prezzo €" />
+            <input required name="description" placeholder="Descrizione breve" />
+            <button class="btn" type="submit">Salva prodotto</button>
+          </form>
+          <p id="add-product-status" class="status"></p>
+        </section>
+
+        <section class="card">
+          <h3>Ordini</h3>
+          <div id="orders-list" class="orders-list"></div>
+        </section>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
